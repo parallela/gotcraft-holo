@@ -1,0 +1,21 @@
+id: player_counter
+type: TEXT
+location: world,0,75,0,0.0,0.0
+text: "<gradient:#FFD700:#FFA500><b>Online Players:</b> %server_online%</gradient>"
+shadow: true
+alignment: CENTER
+opacity: 255
+background:
+  enabled: true
+  color: "100,0,0,0"
+  padding: 3
+view:
+  view-range: 30.0
+  see-through-blocks: false
+scale: "1.2,1.2,1.2"
+billboard: CENTER
+translation: "0,0,0"
+placeholders:
+  enabled: true
+  refresh: 20
+

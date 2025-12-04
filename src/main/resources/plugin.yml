@@ -1,0 +1,27 @@
+name: GotCraftHolo
+version: '${project.version}'
+main: dev.gotcraft.gotCraftHolo.GotCraftHolo
+api-version: '1.21'
+author: GotCraft Network
+description: Professional hologram system for GotCraft Network
+website: https://gotcraft.dev
+
+depend: [HologramLib]
+softdepend: [PlaceholderAPI]
+
+commands:
+  holo:
+    description: Main hologram command
+    usage: /<command> [subcommand]
+    aliases: [hologram, holograms]
+    permission: gotcraftholo.admin
+
+permissions:
+  gotcraftholo.admin:
+    description: Access to all hologram commands
+    default: op
+  gotcraftholo.*:
+    description: Wildcard permission
+    default: op
+    children:
+      gotcraftholo.admin: true

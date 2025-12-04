@@ -1,0 +1,14 @@
+id: diamond_sword_display
+type: ITEM
+location: world,10,73,10,0.0,0.0
+material: DIAMOND_SWORD
+glowing: false
+glow-color: "255,255,255"
+on-fire: false
+view:
+  view-range: 25.0
+  see-through-blocks: false
+scale: "2.0,2.0,0.01"
+billboard: VERTICAL
+translation: "0,0.5,0"
+

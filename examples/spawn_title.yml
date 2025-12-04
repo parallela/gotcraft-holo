@@ -1,0 +1,21 @@
+id: spawn_title
+type: TEXT
+location: world,0,72,0,0.0,0.0
+text: "<gradient:#00F8F8:#00F542><b>ɢᴏᴛᴄʀᴀꜰᴛ</b></gradient> <white>Network</white>"
+shadow: true
+alignment: CENTER
+opacity: 255
+background:
+  enabled: true
+  color: "60,255,236,222"
+  padding: 2
+view:
+  view-range: 25.0
+  see-through-blocks: false
+scale: "1.5,1.5,1.5"
+billboard: CENTER
+translation: "0,0,0"
+placeholders:
+  enabled: false
+  refresh: 20
+

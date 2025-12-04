@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════════════════
+#  GotCraftHolo Configuration
+#  Professional Hologram System for GotCraft Network
+# ═══════════════════════════════════════════════════════════════
+
+# Plugin Settings
+settings:
+  # Enable debug mode (verbose logging)
+  debug: false
+
+  # Auto-save interval (in minutes)
+  # Set to 0 to disable auto-save
+  auto-save-interval: 5
+
+  # Default hologram settings
+  defaults:
+    text:
+      shadow: true
+      alignment: CENTER
+      opacity: 255
+      background-enabled: false
+      background-color: "80,0,0,0" # ARGB
+      background-padding: 2
+      view-range: 25.0
+      see-through-blocks: false
+      billboard: CENTER
+      scale: "1.0,1.0,1.0"
+      placeholders-enabled: false
+      placeholder-refresh-ticks: 20
+
+    item:
+      glowing: false
+      glow-color: "255,255,255" # RGB
+      on-fire: false
+      view-range: 25.0
+      see-through-blocks: false
+      billboard: VERTICAL
+      scale: "1.0,1.0,1.0"
+
+    block:
+      on-fire: false
+      view-range: 25.0
+      see-through-blocks: false
+      billboard: NONE
+      scale: "1.0,1.0,1.0"
+
+# Performance Settings
+performance:
+  # Maximum number of holograms that can be loaded
+  max-holograms: 500
+
+  # Enable async hologram updates
+  async-updates: true
+
+  # Placeholder refresh optimization
+  # Only refresh holograms that contain placeholders
+  optimize-placeholder-refresh: true
+

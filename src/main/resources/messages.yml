@@ -1,0 +1,59 @@
+# ═══════════════════════════════════════════════════════════════
+#  GotCraftHolo Messages
+#  All messages support MiniMessage formatting
+# ═══════════════════════════════════════════════════════════════
+
+prefix: "<gradient:#00F8F8:#00F542><b>Holo</b></gradient> <dark_gray>»</dark_gray> "
+
+# Command Messages
+created: "<green>Hologram <white><id></white> created successfully!"
+removed: "<red>Hologram <white><id></white> removed!"
+updated: "<yellow>Hologram updated successfully!"
+not-found: "<red>No hologram with ID <white><id></white> found!"
+reloaded: "<green>All holograms reloaded successfully!"
+
+# Error Messages
+no-permission: "<red>You don't have permission to use this command!"
+player-only: "<red>Only players can use this command!"
+invalid-type: "<red>Invalid hologram type! Use: text, item, or block"
+invalid-material: "<red>Invalid material!"
+invalid-number: "<red>Invalid number!"
+already-exists: "<red>A hologram with that ID already exists!"
+not-text-hologram: "<red>This hologram is not a text hologram!"
+not-item-hologram: "<red>This hologram is not an item hologram!"
+not-block-hologram: "<red>This hologram is not a block hologram!"
+
+# Success Messages
+teleported: "<green>Teleported to hologram <white><id></white>!"
+moved: "<green>Hologram <white><id></white> moved to your location!"
+text-updated: "<green>Text updated for hologram <white><id></white>!"
+scale-updated: "<green>Scale updated for hologram <white><id></white>!"
+background-enabled: "<green>Background enabled for hologram <white><id></white>!"
+background-disabled: "<red>Background disabled for hologram <white><id></white>!"
+placeholders-enabled: "<green>Placeholders enabled for hologram <white><id></white>!"
+placeholders-disabled: "<red>Placeholders disabled for hologram <white><id></white>!"
+
+# Info Messages
+list-header: "<gradient:#00F8F8:#00F542><b>═══ Holograms (<count>) ═══</b></gradient>"
+list-entry: "<white>• <id></white> <gray>(<type>) at <world>, <x>, <y>, <z></gray>"
+no-holograms: "<yellow>No holograms found."
+
+# Help Messages
+help-header: "<gradient:#00F8F8:#00F542><b>═══ GotCraftHolo Help ═══</b></gradient>"
+help-create: "<yellow>/holo create <id> <type> [material]</yellow> <gray>- Create a hologram</gray>"
+help-remove: "<yellow>/holo remove <id></yellow> <gray>- Remove a hologram</gray>"
+help-settext: "<yellow>/holo settext <id> <text></yellow> <gray>- Set hologram text</gray>"
+help-list: "<yellow>/holo list</yellow> <gray>- List all holograms</gray>"
+help-tp: "<yellow>/holo tp <id></yellow> <gray>- Teleport to hologram</gray>"
+help-movehere: "<yellow>/holo movehere <id></yellow> <gray>- Move hologram here</gray>"
+help-scale: "<yellow>/holo scale <id> <x> <y> <z></yellow> <gray>- Set hologram scale</gray>"
+help-shadow: "<yellow>/holo shadow <id> <true|false></yellow> <gray>- Toggle text shadow</gray>"
+help-align: "<yellow>/holo align <id> <left|center|right></yellow> <gray>- Set text alignment</gray>"
+help-opacity: "<yellow>/holo opacity <id> <0-255></yellow> <gray>- Set text opacity</gray>"
+help-background: "<yellow>/holo background <id> <action></yellow> <gray>- Configure background</gray>"
+help-billboard: "<yellow>/holo billboard <id> <mode></yellow> <gray>- Set rotation mode</gray>"
+help-seethrough: "<yellow>/holo seethrough <id> <true|false></yellow> <gray>- See through blocks</gray>"
+help-viewrange: "<yellow>/holo viewrange <id> <distance></yellow> <gray>- Set view range</gray>"
+help-placeholders: "<yellow>/holo placeholders <id> <action></yellow> <gray>- Configure placeholders</gray>"
+help-reload: "<yellow>/holo reload</yellow> <gray>- Reload all holograms</gray>"
+
