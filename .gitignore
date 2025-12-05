@@ -61,4 +61,5 @@ Desktop.ini
 # Build outputs
 *.jar
 !gradle-wrapper.jar
+miscs/
 
