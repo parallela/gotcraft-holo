@@ -475,10 +475,15 @@ public class HoloManager {
                     }
 
                     // Build the options with all settings
+                    // Use actual number of entries if defined, otherwise use max-entries from config
+                    int actualMaxEntries = lbConfig.getEntries().isEmpty()
+                        ? lbConfig.getMaxDisplayEntries()
+                        : Math.min(lbConfig.getMaxDisplayEntries(), lbConfig.getEntries().size());
+
                     LeaderboardHologram.LeaderboardOptions.LeaderboardOptionsBuilder builder =
                         LeaderboardHologram.LeaderboardOptions.builder()
                             .title(lbConfig.getTitle())
-                            .maxDisplayEntries(lbConfig.getMaxDisplayEntries())
+                            .maxDisplayEntries(actualMaxEntries)
                             .suffix(lbConfig.getSuffix())
                             .showEmptyPlaces(lbConfig.isShowEmptyPlaces())
                             .titleFormat(lbConfig.getTitleFormat())
@@ -536,6 +541,14 @@ public class HoloManager {
                     }
 
                     hologramManager.spawn(leaderboard, loc);
+
+                    // Apply rotation if billboard is FIXED (NONE)
+                    if (def.getBillboard() == HoloDefinition.BillboardMode.NONE) {
+                        float[] quat = yawPitchToQuaternion(loc.getYaw(), loc.getPitch());
+                        leaderboard.setLeftRotation(quat[0], quat[1], quat[2], quat[3]);
+                        leaderboard.update();
+                    }
+
                     activeHolograms.put(def.getId(), leaderboard);
                     plugin.getLogger().info("LEADERBOARD hologram spawned successfully with player heads!");
                     break;
