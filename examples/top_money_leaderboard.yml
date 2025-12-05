@@ -1,0 +1,51 @@
+id: hologram_top_money
+type: LEADERBOARD
+location: spawn,339.6689042934682,208.748317268772,-89.98386233715928,21.219526,45.600048
+leaderboard:
+  title: Top Money
+  max-entries: 12
+  suffix: ''
+  type: TOP_PLAYER_HEAD
+  show-empty-places: false
+  title-format: <gradient:#F9DF00:#FFD700>╔════════════════════╗<newline>  {title}
+  footer-format: <gradient:#F9DF00:#FFD700>╚════════════════════╝
+  place-formats:
+  - '<newline><newline><gradient:#FFD700:#FFA500><bold>█ #{place}</bold></gradient> {head} <#FCFCFC><bold>{name}</bold><newline>     <#fcfcfc><bold>{score}</bold>{suffix}'
+  - '<gradient:#C0C0C0:#A8A8A8><bold>█ #{place}</bold></gradient> {head} <#FCFCFC>{name}     <#ffec48>→ <#fcfcfc>{score}{suffix}'
+  - '<gradient:#CD7F32:#B87333><bold>█ #{place}</bold></gradient> {head} <#FCFCFC>{name}     <#ffec48>→ <#fcfcfc>{score}{suffix}'
+  default-place-format: '<#FFEC48><bold>▌ #{place}</bold> {head} <#FCFCFC>{name} <#ffec48>→     <#fcfcfc>{score}{suffix}'
+  line-height: 0.3
+  background: true
+  background-color: 2164277299
+  entries:
+  - 1:%ajlb_lb_vault_eco_balance_fixed_1_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_1_alltime_value%
+  - 2:%ajlb_lb_vault_eco_balance_fixed_2_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_2_alltime_value%
+  - 3:%ajlb_lb_vault_eco_balance_fixed_3_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_3_alltime_value%
+  - 4:%ajlb_lb_vault_eco_balance_fixed_4_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_4_alltime_value%
+  - 5:%ajlb_lb_vault_eco_balance_fixed_5_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_5_alltime_value%
+  - 6:%ajlb_lb_vault_eco_balance_fixed_6_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_6_alltime_value%
+  - 7:%ajlb_lb_vault_eco_balance_fixed_7_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_7_alltime_value%
+  - 8:%ajlb_lb_vault_eco_balance_fixed_8_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_8_alltime_value%
+  - 9:%ajlb_lb_vault_eco_balance_fixed_9_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_9_alltime_value%
+  - 10:%ajlb_lb_vault_eco_balance_fixed_10_alltime_name%:%ajlb_lb_vault_eco_balance_fixed_10_alltime_value%
+placeholders:
+  enabled: true
+  refresh: 20
+view:
+  see-through-blocks: false
+scale: 1.0,1.0,1.0
+billboard: CENTER
+translation: 0.0,0.0,0.0
+animation:
+  enabled: false
+  type: NONE
+  speed: 1.0
+  radius: 0.5
+particles:
+  enabled: false
+  type: FLAME
+  count: 3
+  radius: 0.5
+
+text-offset: -0.9
+

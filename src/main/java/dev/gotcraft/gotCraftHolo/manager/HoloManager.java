@@ -520,8 +520,18 @@ public class HoloManager {
                             plugin.getLogger().warning("Could not parse score: " + scoreStr);
                         }
 
-                        // Generate a UUID based on player name for consistency
-                        java.util.UUID uuid = java.util.UUID.nameUUIDFromBytes(playerName.getBytes());
+                        // Get real player UUID for skin head display
+                        // This is critical - HologramLib needs the actual Minecraft UUID to show the player's skin
+                        java.util.UUID uuid;
+                        try {
+                            org.bukkit.OfflinePlayer offlinePlayer = org.bukkit.Bukkit.getOfflinePlayer(playerName);
+                            uuid = offlinePlayer.getUniqueId();
+                            plugin.getLogger().info("Leaderboard entry: " + playerName + " (UUID: " + uuid + ") - Score: " + score);
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("Could not get UUID for player: " + playerName + ", using fallback UUID");
+                            uuid = java.util.UUID.nameUUIDFromBytes(playerName.getBytes());
+                        }
+
                         leaderboard.setPlayerScore(uuid, playerName, score);
                     }
 

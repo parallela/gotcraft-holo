@@ -498,30 +498,25 @@ public class HoloCommand implements CommandExecutor, TabCompleter {
     private boolean handleMigrate(CommandSender sender) {
         sendMessage(sender, "<yellow>Starting migration from DecentHolograms...");
 
-        // Look for DecentHolograms plugin folder
-        org.bukkit.plugin.Plugin dhPlugin = plugin.getServer().getPluginManager().getPlugin("DecentHolograms");
-        File dhHologramsFolder;
-
-        if (dhPlugin != null) {
-            // DecentHolograms is installed, use its holograms folder
-            dhHologramsFolder = new File(dhPlugin.getDataFolder(), "holograms");
-        } else {
-            // Look in miscs/dc_holograms folder (our backup location)
-            File projectRoot = plugin.getDataFolder().getParentFile().getParentFile();
-            dhHologramsFolder = new File(projectRoot, "miscs/dc_holograms");
-        }
+        // Look for DecentHolograms holograms folder in plugins directory
+        File pluginsFolder = plugin.getDataFolder().getParentFile(); // Gets plugins/ folder
+        File dhHologramsFolder = new File(pluginsFolder, "DecentHolograms/holograms");
 
         if (!dhHologramsFolder.exists() || !dhHologramsFolder.isDirectory()) {
-            sendMessage(sender, "<red>DecentHolograms folder not found!");
+            sendMessage(sender, "<red>DecentHolograms holograms folder not found!");
             sendMessage(sender, "<gray>Looking for: " + dhHologramsFolder.getAbsolutePath());
+            sendMessage(sender, "<yellow>Expected location: plugins/DecentHolograms/holograms/");
             return true;
         }
 
         File[] dhFiles = dhHologramsFolder.listFiles((dir, name) -> name.endsWith(".yml"));
         if (dhFiles == null || dhFiles.length == 0) {
             sendMessage(sender, "<red>No DecentHolograms files found to migrate!");
+            sendMessage(sender, "<gray>Folder exists but contains no .yml files");
             return true;
         }
+
+        sendMessage(sender, "<green>Found " + dhFiles.length + " hologram(s) to migrate");
 
         int migrated = 0;
         int skipped = 0;
