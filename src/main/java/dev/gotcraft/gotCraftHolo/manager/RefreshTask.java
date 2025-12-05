@@ -23,17 +23,22 @@ public class RefreshTask extends BukkitRunnable {
     public void run() {
         tickCounter++;
 
+        // Tick text animations
+        if (plugin.getTextAnimationManager() != null) {
+            plugin.getTextAnimationManager().tick();
+        }
+
         for (HoloDefinition def : holoManager.getAllDefinitions()) {
-            // Refresh TEXT holograms with placeholders enabled
-            if (def.getType() == HoloType.TEXT && def.isPlaceholdersEnabled()) {
+            // Refresh TEXT holograms with placeholders or animations enabled
+            if (def.getType() == HoloType.TEXT && (def.isPlaceholdersEnabled() || hasTextAnimations(def))) {
                 // Check if it's time to refresh this hologram
                 if (tickCounter % def.getPlaceholderRefreshTicks() == 0) {
                     holoManager.refreshHologram(def.getId());
                 }
             }
-            // Also refresh ITEM/BLOCK holograms that have text below them with placeholders enabled
+            // Also refresh ITEM/BLOCK holograms that have text below them with placeholders or animations enabled
             else if ((def.getType() == HoloType.ITEM || def.getType() == HoloType.BLOCK)
-                     && def.isPlaceholdersEnabled()
+                     && (def.isPlaceholdersEnabled() || hasTextAnimations(def))
                      && def.getLineCount() > 0) {
                 // Check if it's time to refresh this hologram
                 if (tickCounter % def.getPlaceholderRefreshTicks() == 0) {
@@ -41,6 +46,18 @@ public class RefreshTask extends BukkitRunnable {
                 }
             }
         }
+    }
+
+    /**
+     * Check if hologram text contains animation placeholders
+     */
+    private boolean hasTextAnimations(HoloDefinition def) {
+        if (plugin.getTextAnimationManager() == null) {
+            return false;
+        }
+
+        String text = def.getText();
+        return text != null && plugin.getTextAnimationManager().containsAnimations(text);
     }
 }
 

@@ -1,0 +1,31 @@
+id: Creative
+type: BLOCK
+location: world,58.15,27.15,-50.86,232.41,0.0
+material: DIAMOND_BLOCK
+glowing: false
+glow-color: 255,255,255
+on-fire: false
+lines:
+  - '%img_creative%'
+  - ''
+  - '<gradient:#00F542:#00F8F8>ᴘʟᴀʏᴇʀs:</gradient> <#00F8F8>%gcb_creative_online% <gray>(ᴄʟɪᴄᴋ ᴛᴏ ᴊᴏɪɴ)</gray>'
+placeholders:
+  enabled: true
+  refresh: 20
+view:
+  see-through-blocks: false
+scale: 0.7,0.7,0.7
+billboard: NONE
+translation: 0.0,0.0,0.0
+animation:
+  enabled: true
+  type: SHAKE
+  speed: 1.0
+  radius: 0.5
+particles:
+  enabled: true
+  type: VILLAGER_HAPPY
+  count: 2
+  radius: 0.5
+text-offset: -1.0
+

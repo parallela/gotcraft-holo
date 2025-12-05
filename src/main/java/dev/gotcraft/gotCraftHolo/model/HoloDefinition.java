@@ -66,6 +66,9 @@ public class HoloDefinition {
     // Text offset (for text below ITEM/BLOCK holograms)
     private double textOffset;
 
+    // Leaderboard configuration (for LEADERBOARD type)
+    private LeaderboardConfig leaderboardConfig;
+
     public HoloDefinition(String id, HoloType type, Location location) {
         this.id = id;
         this.type = type;
@@ -108,6 +111,8 @@ public class HoloDefinition {
         this.particleType = "FLAME";
         this.particleCount = 3;
         this.particleRadius = 0.5;
+
+        this.leaderboardConfig = null; // Only initialize if type is LEADERBOARD
     }
 
     // Getters and Setters
@@ -116,6 +121,9 @@ public class HoloDefinition {
     public void setType(HoloType type) { this.type = type; }
     public Location getLocation() { return location; }
     public void setLocation(Location location) { this.location = location; }
+
+    public LeaderboardConfig getLeaderboardConfig() { return leaderboardConfig; }
+    public void setLeaderboardConfig(LeaderboardConfig leaderboardConfig) { this.leaderboardConfig = leaderboardConfig; }
 
     public String getText() {
         // Always regenerate text from lines
@@ -131,12 +139,36 @@ public class HoloDefinition {
         if (text != null && !text.isEmpty()) {
             String[] splitLines = text.split("<newline>");
             this.lines = new ArrayList<>(java.util.Arrays.asList(splitLines));
+
+            // Auto-enable placeholders if text contains % or { characters
+            if (text.contains("%") || text.contains("{")) {
+                this.placeholdersEnabled = true;
+            }
         }
     }
 
     public List<String> getLines() { return lines; }
-    public void setLines(List<String> lines) { this.lines = lines; }
-    public void addLine(String line) { this.lines.add(line); }
+    public void setLines(List<String> lines) {
+        this.lines = lines;
+
+        // Auto-enable placeholders if any line contains % or { characters
+        if (lines != null) {
+            for (String line : lines) {
+                if (line != null && (line.contains("%") || line.contains("{"))) {
+                    this.placeholdersEnabled = true;
+                    break;
+                }
+            }
+        }
+    }
+    public void addLine(String line) {
+        this.lines.add(line);
+
+        // Auto-enable placeholders if line contains % or { characters
+        if (line != null && (line.contains("%") || line.contains("{"))) {
+            this.placeholdersEnabled = true;
+        }
+    }
     public void setLine(int index, String line) {
         while (lines.size() <= index) {
             lines.add("");
@@ -249,6 +281,32 @@ public class HoloDefinition {
             // Save placeholder settings for text below blocks/items
             config.set("placeholders.enabled", placeholdersEnabled);
             config.set("placeholders.refresh", placeholderRefreshTicks);
+        } else if (type == HoloType.LEADERBOARD) {
+            // Save leaderboard configuration
+            if (leaderboardConfig != null) {
+                config.set("leaderboard.title", leaderboardConfig.getTitle());
+                config.set("leaderboard.max-entries", leaderboardConfig.getMaxDisplayEntries());
+                config.set("leaderboard.suffix", leaderboardConfig.getSuffix());
+                config.set("leaderboard.type", leaderboardConfig.getLeaderboardType());
+                config.set("leaderboard.show-empty-places", leaderboardConfig.isShowEmptyPlaces());
+                config.set("leaderboard.title-format", leaderboardConfig.getTitleFormat());
+                config.set("leaderboard.footer-format", leaderboardConfig.getFooterFormat());
+                config.set("leaderboard.place-formats", leaderboardConfig.getPlaceFormats());
+                config.set("leaderboard.default-place-format", leaderboardConfig.getDefaultPlaceFormat());
+                config.set("leaderboard.line-height", leaderboardConfig.getLineHeight());
+                config.set("leaderboard.background", leaderboardConfig.isBackground());
+                config.set("leaderboard.background-color", leaderboardConfig.getBackgroundColor());
+
+                // Save entries
+                List<String> entryStrings = new ArrayList<>();
+                for (LeaderboardConfig.LeaderboardEntry entry : leaderboardConfig.getEntries()) {
+                    entryStrings.add(entry.getRank() + ":" + entry.getNamePlaceholder() + ":" + entry.getScorePlaceholder());
+                }
+                config.set("leaderboard.entries", entryStrings);
+            }
+
+            config.set("placeholders.enabled", true); // Always enabled for leaderboards
+            config.set("placeholders.refresh", placeholderRefreshTicks);
         }
         config.set("view.see-through-blocks", seeThroughBlocks);
 
@@ -325,6 +383,42 @@ public class HoloDefinition {
 
             // Load placeholder settings for text below blocks/items
             holo.setPlaceholdersEnabled(config.getBoolean("placeholders.enabled", false));
+            holo.setPlaceholderRefreshTicks(config.getInt("placeholders.refresh", 20));
+        } else if (type == HoloType.LEADERBOARD) {
+            // Load leaderboard configuration
+            LeaderboardConfig lbConfig = new LeaderboardConfig();
+            lbConfig.setTitle(config.getString("leaderboard.title", "Leaderboard"));
+            lbConfig.setMaxDisplayEntries(config.getInt("leaderboard.max-entries", 10));
+            lbConfig.setSuffix(config.getString("leaderboard.suffix", "points"));
+            lbConfig.setLeaderboardType(config.getString("leaderboard.type", "TOP_PLAYER_HEAD"));
+            lbConfig.setShowEmptyPlaces(config.getBoolean("leaderboard.show-empty-places", false));
+            lbConfig.setTitleFormat(config.getString("leaderboard.title-format",
+                "<gradient:#ff6000:#ffc663>--------- {title} ---------</gradient>"));
+            lbConfig.setFooterFormat(config.getString("leaderboard.footer-format", ""));
+            lbConfig.setPlaceFormats(config.getStringList("leaderboard.place-formats"));
+            lbConfig.setDefaultPlaceFormat(config.getString("leaderboard.default-place-format",
+                "<color:#ffb486><bold>{place}.</bold></color> <color:#ffb486>{name}</color> <gray>{score}</gray> <white>{suffix}</white>"));
+            lbConfig.setLineHeight(config.getDouble("leaderboard.line-height", 0.25));
+            lbConfig.setBackground(config.getBoolean("leaderboard.background", false));
+            lbConfig.setBackgroundColor(config.getInt("leaderboard.background-color", 0x54000000));
+
+            // Load entries
+            List<String> entryStrings = config.getStringList("leaderboard.entries");
+            List<LeaderboardConfig.LeaderboardEntry> entries = new ArrayList<>();
+            for (String entryStr : entryStrings) {
+                String[] parts = entryStr.split(":", 3);
+                if (parts.length == 3) {
+                    entries.add(new LeaderboardConfig.LeaderboardEntry(
+                        Integer.parseInt(parts[0]),
+                        parts[1],
+                        parts[2]
+                    ));
+                }
+            }
+            lbConfig.setEntries(entries);
+
+            holo.setLeaderboardConfig(lbConfig);
+            holo.setPlaceholdersEnabled(true); // Always enabled for leaderboards
             holo.setPlaceholderRefreshTicks(config.getInt("placeholders.refresh", 20));
         }
 

@@ -4,6 +4,7 @@ import com.maximde.hologramlib.HologramLib;
 import dev.gotcraft.gotCraftHolo.commands.HoloCommand;
 import dev.gotcraft.gotCraftHolo.manager.HoloManager;
 import dev.gotcraft.gotCraftHolo.manager.RefreshTask;
+import dev.gotcraft.gotCraftHolo.manager.TextAnimationManager;
 import dev.gotcraft.gotCraftHolo.service.PlaceholderService;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,6 +25,7 @@ public final class GotCraftHolo extends JavaPlugin {
 
     private HoloManager holoManager;
     private RefreshTask refreshTask;
+    private TextAnimationManager textAnimationManager;
     private FileConfiguration messagesConfig;
     private File messagesFile;
 
@@ -64,6 +66,9 @@ public final class GotCraftHolo extends JavaPlugin {
         // Load configs
         saveDefaultConfig();
         loadMessages();
+
+        // Initialize text animation manager
+        textAnimationManager = new TextAnimationManager(this);
 
         // Initialize services
         PlaceholderService.init();
@@ -110,9 +115,8 @@ public final class GotCraftHolo extends JavaPlugin {
             refreshTask.cancel();
         }
 
-        // Save and unload all holograms
+        // Unload all holograms (but don't save - files are already saved when modified)
         if (holoManager != null) {
-            holoManager.saveAll();
             holoManager.unloadAll();
         }
 
@@ -165,5 +169,12 @@ public final class GotCraftHolo extends JavaPlugin {
      */
     public HoloManager getHoloManager() {
         return holoManager;
+    }
+
+    /**
+     * Get the text animation manager
+     */
+    public TextAnimationManager getTextAnimationManager() {
+        return textAnimationManager;
     }
 }

@@ -1,0 +1,49 @@
+id: north_facing_sign
+type: TEXT
+# Location with rotation: world,x,y,z,yaw,pitch
+# Yaw 180 = facing North
+# Pitch 0 = level/horizontal
+location: world,100.5,64.0,200.5,180.0,0.0
+
+lines:
+  - '<gradient:#00F542:#00F8F8><bold>North Entrance</bold></gradient>'
+  - ''
+  - '<gray>Welcome to the spawn area!</gray>'
+
+shadow: true
+alignment: CENTER
+opacity: 255
+
+background:
+  enabled: true
+  color: 100,0,0,0
+  padding: 3
+
+placeholders:
+  enabled: false
+  refresh: 20
+
+view:
+  see-through-blocks: false
+
+scale: 1.0,1.0,1.0
+
+# IMPORTANT: Must be NONE for rotation to work!
+billboard: NONE
+
+translation: 0.0,0.0,0.0
+
+animation:
+  enabled: false
+  type: NONE
+  speed: 1.0
+  radius: 0.5
+
+particles:
+  enabled: false
+  type: FLAME
+  count: 3
+  radius: 0.5
+
+text-offset: -0.9
+

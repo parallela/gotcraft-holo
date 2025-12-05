@@ -6,6 +6,7 @@ package dev.gotcraft.gotCraftHolo.model;
 public enum HoloType {
     TEXT,
     ITEM,
-    BLOCK
+    BLOCK,
+    LEADERBOARD
 }
 

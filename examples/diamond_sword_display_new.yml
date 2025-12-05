@@ -1,0 +1,31 @@
+id: diamond_sword
+type: ITEM
+location: world,0.0,64.0,0.0,0.0,0.0
+material: DIAMOND_SWORD
+glowing: true
+glow-color: 0,200,255
+on-fire: false
+lines:
+  - '<gradient:#00F542:#00F8F8><bold>LEGENDARY SWORD</bold></gradient>'
+  - ''
+  - '<gray>Click to obtain!</gray>'
+placeholders:
+  enabled: false
+  refresh: 20
+view:
+  see-through-blocks: false
+scale: 1.0,1.0,1.0
+billboard: CENTER
+translation: 0.0,0.0,0.0
+animation:
+  enabled: true
+  type: ROTATE
+  speed: 1.0
+  radius: 0.5
+particles:
+  enabled: true
+  type: ENCHANTMENT_TABLE
+  count: 5
+  radius: 0.8
+text-offset: -1.2
+

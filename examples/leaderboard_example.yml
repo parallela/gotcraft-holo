@@ -1,0 +1,48 @@
+id: top_level_island
+type: TEXT
+location: world,100.5,64.0,200.5,0.0,0.0
+
+# Complete Top 5 Leaderboard for Island Levels
+lines:
+  - '<#F9DF00><bold>Top Level Island</bold>'
+  - ''
+  - '<#FFEC48><bold>#1</bold> <#FCFCFC>%superior_island_top_level_1% <#ffec48>➟ <#fcfcfc>%superior_island_top_level_value_1%'
+  - '<#FFEC48><bold>#2</bold> <#FCFCFC>%superior_island_top_level_2% <#ffec48>➟ <#fcfcfc>%superior_island_top_level_value_2%'
+  - '<#FFEC48><bold>#3</bold> <#FCFCFC>%superior_island_top_level_3% <#ffec48>➟ <#fcfcfc>%superior_island_top_level_value_3%'
+  - '<#FFEC48><bold>#4</bold> <#FCFCFC>%superior_island_top_level_4% <#ffec48>➟ <#fcfcfc>%superior_island_top_level_value_4%'
+  - '<#FFEC48><bold>#5</bold> <#FCFCFC>%superior_island_top_level_5% <#ffec48>➟ <#fcfcfc>%superior_island_top_level_value_5%'
+
+shadow: true
+alignment: CENTER
+opacity: 255
+
+background:
+  enabled: false
+  color: 80,0,0,0
+  padding: 2
+
+placeholders:
+  enabled: true
+  refresh: 20
+
+view:
+  see-through-blocks: false
+
+scale: 1.0,1.0,1.0
+billboard: CENTER
+translation: 0.0,0.0,0.0
+
+animation:
+  enabled: false
+  type: NONE
+  speed: 1.0
+  radius: 0.5
+
+particles:
+  enabled: false
+  type: FLAME
+  count: 3
+  radius: 0.5
+
+text-offset: -0.9
+

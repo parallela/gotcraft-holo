@@ -1,0 +1,89 @@
+id: top_island_leaderboard
+type: LEADERBOARD
+location: spawn,327.074,214.125,-91.416,0.0,0.0
+
+# Leaderboard configuration with player heads
+leaderboard:
+  # Title with box drawing characters
+  title: "Top Level Island"
+  max-entries: 5
+  suffix: ""
+
+  # Leaderboard type - this determines how player heads are shown
+  # TOP_PLAYER_HEAD = Shows #1 player's head at the top
+  # ALL_PLAYER_HEADS = Shows head next to each player name
+  # SIMPLE_TEXT = Text only, no heads
+  type: "TOP_PLAYER_HEAD"
+
+  show-empty-places: false
+
+  # Title format with decorative box
+  title-format: "<gradient:#F9DF00:#FFD700>╔═══════════════════╗<newline>  {title}<newline>╚═══════════════════╝</gradient>"
+
+  # Footer format (optional decorative bottom)
+  footer-format: ""
+
+  # Custom formats for top 3 ranks
+  # {place} = rank number, {head} = player head (if type supports it)
+  # {name} = player name, {score} = score value, {suffix} = suffix text
+  place-formats:
+    - "<gradient:#FFD700:#FFA500><bold>█ #{place}</bold></gradient> {head} <#FCFCFC><bold>{name}</bold> <#ffec48>→ <#fcfcfc><bold>{score}</bold>{suffix}"
+    - "<gradient:#C0C0C0:#A8A8A8><bold>█ #{place}</bold></gradient> {head} <#FCFCFC>{name} <#ffec48>→ <#fcfcfc>{score}{suffix}"
+    - "<gradient:#CD7F32:#B87333><bold>█ #{place}</bold></gradient> {head} <#FCFCFC>{name} <#ffec48>→ <#fcfcfc>{score}{suffix}"
+
+  # Default format for ranks 4+
+  default-place-format: "<#FFEC48><bold>▌ #{place}</bold> {head} <#FCFCFC>{name} <#ffec48>→ <#fcfcfc>{score}{suffix}"
+
+  # Leaderboard entries with PlaceholderAPI placeholders
+  # These will be replaced with actual player names and values
+  entries:
+    - "1:%superior_island_top_level_1%:%superior_island_top_level_value_1%"
+    - "2:%superior_island_top_level_2%:%superior_island_top_level_value_2%"
+    - "3:%superior_island_top_level_3%:%superior_island_top_level_value_3%"
+    - "4:%superior_island_top_level_4%:%superior_island_top_level_value_4%"
+    - "5:%superior_island_top_level_5%:%superior_island_top_level_value_5%"
+
+  # Visual settings
+  line-height: 0.3  # Space between entries
+  background: true
+  background-color: 1409286144  # Semi-transparent black background
+
+# Standard hologram settings
+placeholders:
+  enabled: true  # Always true for leaderboards
+  refresh: 20     # Update every 20 ticks (1 second)
+
+view:
+  see-through-blocks: false
+
+scale: 1.0,1.0,1.0
+billboard: CENTER  # Always faces player
+translation: 0.0,0.0,0.0
+
+animation:
+  enabled: false
+  type: NONE
+  speed: 1.0
+  radius: 0.5
+
+particles:
+  enabled: false
+  type: FLAME
+  count: 3
+  radius: 0.5
+
+text-offset: -0.9
+
+# ═══════════════════════════════════════════════════════════
+# UTF-8 Box Drawing Characters for Decoration:
+#
+# ╔═╗ ╚═╝ ║ ═  (Double line box)
+# ┌─┐ └─┘ │ ─  (Single line box)
+# ╭─╮ ╰─╯        (Rounded corners)
+# █ ▌ ▐ ▀ ▄     (Blocks)
+# ▶ ◀ ▲ ▼       (Arrows)
+# ● ○ ◆ ◇       (Shapes)
+# ★ ☆ ✦ ✧       (Stars)
+# → ← ↑ ↓ ➟     (Arrows)
+# ═══════════════════════════════════════════════════════════
+

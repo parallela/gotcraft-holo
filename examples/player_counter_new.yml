@@ -1,0 +1,36 @@
+id: player_counter
+type: TEXT
+location: world,0.0,70.0,0.0,0.0,0.0
+lines:
+  - '<gradient:#00F542:#00F8F8><bold>SERVER STATUS</bold></gradient>'
+  - ''
+  - '<white>Players Online: <green>%server_online%/%server_max_players%</green></white>'
+  - ''
+  - '<gray>Welcome to the server!</gray>'
+shadow: true
+alignment: CENTER
+opacity: 255
+background:
+  enabled: true
+  color: 100,0,0,0
+  padding: 3
+placeholders:
+  enabled: true
+  refresh: 20
+view:
+  see-through-blocks: false
+scale: 0.8,0.8,0.8
+billboard: CENTER
+translation: 0.0,0.0,0.0
+animation:
+  enabled: false
+  type: NONE
+  speed: 1.0
+  radius: 0.5
+particles:
+  enabled: false
+  type: FLAME
+  count: 3
+  radius: 0.5
+text-offset: -0.9
+

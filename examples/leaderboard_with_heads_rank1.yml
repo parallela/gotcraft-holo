@@ -1,0 +1,40 @@
+id: top_level_island_1
+type: ITEM
+location: world,100.5,65.0,200.5,0.0,0.0
+material: PLAYER_HEAD
+
+# This will display the player head of rank #1
+# You can use a placeholder to dynamically show the head
+glowing: false
+glow-color: 255,255,255
+on-fire: false
+
+lines:
+  - '<#FFEC48><bold>#1</bold> <#FCFCFC>%superior_island_top_level_1%'
+  - '<#ffec48>➟ <#fcfcfc>%superior_island_top_level_value_1%'
+
+placeholders:
+  enabled: true
+  refresh: 20
+
+view:
+  see-through-blocks: false
+
+scale: 0.8,0.8,0.8
+billboard: CENTER
+translation: 0.0,0.0,0.0
+
+animation:
+  enabled: false
+  type: NONE
+  speed: 1.0
+  radius: 0.5
+
+particles:
+  enabled: false
+  type: FLAME
+  count: 3
+  radius: 0.5
+
+text-offset: -1.0
+

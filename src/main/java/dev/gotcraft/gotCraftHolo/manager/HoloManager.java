@@ -1,14 +1,17 @@
 package dev.gotcraft.gotCraftHolo.manager;
 
+import com.maximde.hologramlib.hologram.custom.LeaderboardHologram;
 import dev.gotcraft.gotCraftHolo.GotCraftHolo;
 import dev.gotcraft.gotCraftHolo.model.HoloDefinition;
 import dev.gotcraft.gotCraftHolo.model.HoloType;
+import dev.gotcraft.gotCraftHolo.model.LeaderboardConfig;
 import dev.gotcraft.gotCraftHolo.service.PlaceholderService;
 import com.maximde.hologramlib.hologram.HologramManager;
 import com.maximde.hologramlib.hologram.Hologram;
 import com.maximde.hologramlib.hologram.TextHologram;
 import com.maximde.hologramlib.hologram.ItemHologram;
 import com.maximde.hologramlib.hologram.BlockHologram;
+import com.maximde.hologramlib.hologram.custom.LeaderboardHologram;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.item.type.ItemType;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
@@ -16,7 +19,6 @@ import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Display;
 
 import java.io.File;
@@ -32,7 +34,7 @@ public class HoloManager {
 
     private final GotCraftHolo plugin;
     private final Map<String, HoloDefinition> definitions;
-    private final Map<String, Hologram<?>> activeHolograms;
+    private final Map<String, Object> activeHolograms; // Stores Hologram<?> and LeaderboardHologram
     private final File dataFolder;
     private HologramManager hologramManager;
     private AnimationManager animationManager;
@@ -104,7 +106,8 @@ public class HoloManager {
      * Get an active hologram by ID
      */
     public Hologram<?> getActiveHologram(String id) {
-        return activeHolograms.get(id);
+        Object holo = activeHolograms.get(id);
+        return (holo instanceof Hologram) ? (Hologram<?>) holo : null;
     }
 
     /**
@@ -116,8 +119,12 @@ public class HoloManager {
             animationManager.stopAll();
         }
 
-        for (Hologram<?> hologram : activeHolograms.values()) {
-            hologramManager.remove(hologram);
+        for (Object obj : activeHolograms.values()) {
+            if (obj instanceof Hologram) {
+                hologramManager.remove((Hologram<?>) obj);
+            } else if (obj instanceof LeaderboardHologram) {
+                hologramManager.remove((LeaderboardHologram) obj);
+            }
         }
         activeHolograms.clear();
     }
@@ -155,15 +162,19 @@ public class HoloManager {
         }
 
         // Remove main hologram
-        Hologram<?> hologram = activeHolograms.remove(id);
-        if (hologram != null) {
-            hologramManager.remove(hologram);
+        Object hologramObj = activeHolograms.remove(id);
+        if (hologramObj != null) {
+            if (hologramObj instanceof Hologram) {
+                hologramManager.remove((Hologram<?>) hologramObj);
+            } else if (hologramObj instanceof LeaderboardHologram) {
+                hologramManager.remove((LeaderboardHologram) hologramObj);
+            }
         }
 
         // Remove text hologram below item/block if it exists
-        Hologram<?> textHologram = activeHolograms.remove(id + "_text");
-        if (textHologram != null) {
-            hologramManager.remove(textHologram);
+        Object textHologramObj = activeHolograms.remove(id + "_text");
+        if (textHologramObj instanceof Hologram) {
+            hologramManager.remove((Hologram<?>) textHologramObj);
         }
 
         File file = new File(dataFolder, id + ".yml");
@@ -203,15 +214,19 @@ public class HoloManager {
             }
 
             // Remove old main hologram
-            Hologram<?> oldHologram = activeHolograms.remove(def.getId());
-            if (oldHologram != null) {
-                hologramManager.remove(oldHologram);
+            Object oldHologramObj = activeHolograms.remove(def.getId());
+            if (oldHologramObj != null) {
+                if (oldHologramObj instanceof Hologram) {
+                    hologramManager.remove((Hologram<?>) oldHologramObj);
+                } else if (oldHologramObj instanceof LeaderboardHologram) {
+                    hologramManager.remove((LeaderboardHologram) oldHologramObj);
+                }
             }
 
             // Remove old text hologram below item/block if it exists
-            Hologram<?> oldTextHologram = activeHolograms.remove(def.getId() + "_text");
-            if (oldTextHologram != null) {
-                hologramManager.remove(oldTextHologram);
+            Object oldTextHologramObj = activeHolograms.remove(def.getId() + "_text");
+            if (oldTextHologramObj instanceof Hologram) {
+                hologramManager.remove((Hologram<?>) oldTextHologramObj);
             }
 
             // Spawn new hologram (and text below if applicable)
@@ -223,7 +238,7 @@ public class HoloManager {
     }
 
     /**
-     * Refresh hologram text (for placeholders)
+     * Refresh hologram text (for placeholders and animations)
      */
     public void refreshHologram(String id) {
         HoloDefinition def = definitions.get(id);
@@ -233,15 +248,23 @@ public class HoloManager {
 
         // Handle TEXT type holograms
         if (def.getType() == HoloType.TEXT) {
-            Hologram<?> hologram = activeHolograms.get(id);
-            if (!(hologram instanceof TextHologram)) {
+            Object hologramObj = activeHolograms.get(id);
+            if (!(hologramObj instanceof TextHologram)) {
                 return;
             }
 
-            TextHologram textHologram = (TextHologram) hologram;
+            TextHologram textHologram = (TextHologram) hologramObj;
             String text = def.getText();
+
+            // Process placeholders
             if (PlaceholderService.isEnabled() && PlaceholderService.containsPlaceholders(text)) {
                 text = PlaceholderService.setPlaceholders(text);
+            }
+
+            // Process text animations
+            if (plugin.getTextAnimationManager() != null &&
+                plugin.getTextAnimationManager().containsAnimations(text)) {
+                text = plugin.getTextAnimationManager().processAnimations(text);
             }
 
             textHologram.setMiniMessageText(text).update();
@@ -249,12 +272,12 @@ public class HoloManager {
         // Handle text below ITEM/BLOCK holograms
         else if (def.getType() == HoloType.ITEM || def.getType() == HoloType.BLOCK) {
             // Get the text hologram that appears below the item/block
-            Hologram<?> hologram = activeHolograms.get(id + "_text");
-            if (!(hologram instanceof TextHologram)) {
+            Object hologramObj = activeHolograms.get(id + "_text");
+            if (!(hologramObj instanceof TextHologram)) {
                 return;
             }
 
-            TextHologram textHologram = (TextHologram) hologram;
+            TextHologram textHologram = (TextHologram) hologramObj;
             String text = def.getText();
 
             // If no text, remove the text hologram
@@ -264,8 +287,15 @@ public class HoloManager {
                 return;
             }
 
+            // Process placeholders
             if (PlaceholderService.isEnabled() && PlaceholderService.containsPlaceholders(text)) {
                 text = PlaceholderService.setPlaceholders(text);
+            }
+
+            // Process text animations
+            if (plugin.getTextAnimationManager() != null &&
+                plugin.getTextAnimationManager().containsAnimations(text)) {
+                text = plugin.getTextAnimationManager().processAnimations(text);
             }
 
             textHologram.setMiniMessageText(text).update();
@@ -282,8 +312,16 @@ public class HoloManager {
             switch (def.getType()) {
                 case TEXT:
                     String text = def.getText();
+
+                    // Process placeholders
                     if (PlaceholderService.isEnabled() && PlaceholderService.containsPlaceholders(text)) {
                         text = PlaceholderService.setPlaceholders(text);
+                    }
+
+                    // Process text animations
+                    if (plugin.getTextAnimationManager() != null &&
+                        plugin.getTextAnimationManager().containsAnimations(text)) {
+                        text = plugin.getTextAnimationManager().processAnimations(text);
                     }
 
                     TextHologram textHologram = new TextHologram(def.getId())
@@ -297,6 +335,7 @@ public class HoloManager {
                         .setBillboard(convertBillboard(def.getBillboard()))
                         .setTranslation((float) def.getTranslation().getX(), (float) def.getTranslation().getY(), (float) def.getTranslation().getZ());
 
+
                     if (def.isBackgroundEnabled()) {
                         int[] bgColor = def.getBackgroundColor();
                         // Create ARGB color: (alpha << 24) | (red << 16) | (green << 8) | blue
@@ -307,6 +346,14 @@ public class HoloManager {
                     }
 
                     hologramManager.spawn(textHologram, loc);
+
+                    // Apply rotation if billboard is FIXED (NONE)
+                    if (def.getBillboard() == HoloDefinition.BillboardMode.NONE) {
+                        float[] quat = yawPitchToQuaternion(loc.getYaw(), loc.getPitch());
+                        textHologram.setLeftRotation(quat[0], quat[1], quat[2], quat[3]);
+                        textHologram.update();
+                    }
+
                     activeHolograms.put(def.getId(), textHologram);
                     break;
 
@@ -331,6 +378,7 @@ public class HoloManager {
                         .setBillboard(convertBillboard(def.getBillboard()))
                         .setTranslation((float) def.getTranslation().getX(), (float) def.getTranslation().getY(), (float) def.getTranslation().getZ());
 
+
                     if (def.isGlowing()) {
                         int[] color = def.getGlowColor();
                         itemHologram.setGlowColor(new java.awt.Color(color[0], color[1], color[2]));
@@ -338,6 +386,14 @@ public class HoloManager {
 
                     plugin.getLogger().info("Spawning at location: " + loc);
                     hologramManager.spawn(itemHologram, loc);
+
+                    // Apply rotation if billboard is FIXED (NONE)
+                    if (def.getBillboard() == HoloDefinition.BillboardMode.NONE) {
+                        float[] quat = yawPitchToQuaternion(loc.getYaw(), loc.getPitch());
+                        itemHologram.setLeftRotation(quat[0], quat[1], quat[2], quat[3]);
+                        itemHologram.update();
+                    }
+
                     activeHolograms.put(def.getId(), itemHologram);
                     plugin.getLogger().info("ITEM hologram spawned successfully!");
 
@@ -375,13 +431,103 @@ public class HoloManager {
                         .setBillboard(convertBillboard(def.getBillboard()))
                         .setTranslation((float) def.getTranslation().getX(), (float) def.getTranslation().getY(), (float) def.getTranslation().getZ());
 
+
                     plugin.getLogger().info("Spawning at location: " + loc);
                     hologramManager.spawn(blockHologram, loc);
+
+                    // Apply rotation if billboard is FIXED (NONE)
+                    if (def.getBillboard() == HoloDefinition.BillboardMode.NONE) {
+                        float[] quat = yawPitchToQuaternion(loc.getYaw(), loc.getPitch());
+                        blockHologram.setLeftRotation(quat[0], quat[1], quat[2], quat[3]);
+                        blockHologram.update();
+                    }
+
                     activeHolograms.put(def.getId(), blockHologram);
                     plugin.getLogger().info("BLOCK hologram spawned successfully!");
 
                     // Spawn text hologram below if text lines exist
                     spawnTextBelowHologram(def, loc);
+                    break;
+
+                case LEADERBOARD:
+                    plugin.getLogger().info("Spawning LEADERBOARD hologram: " + def.getId());
+
+                    LeaderboardConfig lbConfig = def.getLeaderboardConfig();
+                    if (lbConfig == null) {
+                        plugin.getLogger().severe("Leaderboard config is null for " + def.getId());
+                        return;
+                    }
+
+                    // Build options using LeaderboardHologram API
+                    // Set leaderboard type first
+                    LeaderboardHologram.LeaderboardType lbType;
+                    switch (lbConfig.getLeaderboardType()) {
+                        case "ALL_PLAYER_HEADS":
+                            lbType = LeaderboardHologram.LeaderboardType.ALL_PLAYER_HEADS;
+                            break;
+                        case "SIMPLE_TEXT":
+                            lbType = LeaderboardHologram.LeaderboardType.SIMPLE_TEXT;
+                            break;
+                        case "TOP_PLAYER_HEAD":
+                        default:
+                            lbType = LeaderboardHologram.LeaderboardType.TOP_PLAYER_HEAD;
+                            break;
+                    }
+
+                    // Build the options with all settings
+                    LeaderboardHologram.LeaderboardOptions.LeaderboardOptionsBuilder builder =
+                        LeaderboardHologram.LeaderboardOptions.builder()
+                            .title(lbConfig.getTitle())
+                            .maxDisplayEntries(lbConfig.getMaxDisplayEntries())
+                            .suffix(lbConfig.getSuffix())
+                            .showEmptyPlaces(lbConfig.isShowEmptyPlaces())
+                            .titleFormat(lbConfig.getTitleFormat())
+                            .footerFormat(lbConfig.getFooterFormat())
+                            .defaultPlaceFormat(lbConfig.getDefaultPlaceFormat())
+                            .lineHeight(lbConfig.getLineHeight())
+                            .background(lbConfig.isBackground())
+                            .backgroundColor(lbConfig.getBackgroundColor())
+                            .leaderboardType(lbType);
+
+                    // Add custom place formats if configured
+                    if (!lbConfig.getPlaceFormats().isEmpty()) {
+                        builder.placeFormats(lbConfig.getPlaceFormats().toArray(new String[0]));
+                    }
+
+                    LeaderboardHologram.LeaderboardOptions options = builder.build();
+                    LeaderboardHologram leaderboard = new LeaderboardHologram(options, def.getId());
+
+                    // Add player scores from config entries
+                    for (LeaderboardConfig.LeaderboardEntry entry : lbConfig.getEntries()) {
+                        // Process placeholders in name and score
+                        String playerName = entry.getNamePlaceholder();
+                        String scoreStr = entry.getScorePlaceholder();
+
+                        if (PlaceholderService.isEnabled()) {
+                            playerName = PlaceholderService.setPlaceholders(playerName);
+                            scoreStr = PlaceholderService.setPlaceholders(scoreStr);
+                        }
+
+                        // Parse score as double
+                        double score = 0.0;
+                        try {
+                            // Remove any non-numeric characters except decimal point
+                            String cleanScore = scoreStr.replaceAll("[^0-9.]", "");
+                            if (!cleanScore.isEmpty()) {
+                                score = Double.parseDouble(cleanScore);
+                            }
+                        } catch (NumberFormatException e) {
+                            plugin.getLogger().warning("Could not parse score: " + scoreStr);
+                        }
+
+                        // Generate a UUID based on player name for consistency
+                        java.util.UUID uuid = java.util.UUID.nameUUIDFromBytes(playerName.getBytes());
+                        leaderboard.setPlayerScore(uuid, playerName, score);
+                    }
+
+                    hologramManager.spawn(leaderboard, loc);
+                    activeHolograms.put(def.getId(), leaderboard);
+                    plugin.getLogger().info("LEADERBOARD hologram spawned successfully with player heads!");
                     break;
 
                 default:
@@ -428,6 +574,12 @@ public class HoloManager {
         // Process placeholders if enabled
         if (PlaceholderService.isEnabled() && PlaceholderService.containsPlaceholders(text)) {
             text = PlaceholderService.setPlaceholders(text);
+        }
+
+        // Process text animations
+        if (plugin.getTextAnimationManager() != null &&
+            plugin.getTextAnimationManager().containsAnimations(text)) {
+            text = plugin.getTextAnimationManager().processAnimations(text);
         }
 
         // Calculate position below the item/block
@@ -501,6 +653,30 @@ public class HoloManager {
             case RIGHT -> org.bukkit.entity.TextDisplay.TextAlignment.RIGHT;
             case CENTER -> org.bukkit.entity.TextDisplay.TextAlignment.CENTER;
         };
+    }
+
+    /**
+     * Convert yaw and pitch to quaternion for left rotation
+     * Returns array: [x, y, z, w]
+     */
+    private float[] yawPitchToQuaternion(float yaw, float pitch) {
+        // Convert degrees to radians
+        double yawRad = Math.toRadians(yaw);
+        double pitchRad = Math.toRadians(pitch);
+
+        // Calculate quaternion components
+        // For Minecraft/Display entities, we use Y-axis for yaw and X-axis for pitch
+        double cy = Math.cos(yawRad * 0.5);
+        double sy = Math.sin(yawRad * 0.5);
+        double cp = Math.cos(pitchRad * 0.5);
+        double sp = Math.sin(pitchRad * 0.5);
+
+        float w = (float)(cy * cp);
+        float x = (float)(cy * sp);
+        float y = (float)(sy * cp);
+        float z = (float)(-sy * sp);
+
+        return new float[]{x, y, z, w};
     }
 }
 
